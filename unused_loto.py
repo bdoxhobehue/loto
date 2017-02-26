@@ -3,6 +3,7 @@ import operator
 import requests
 import re
 from bs4 import BeautifulSoup
+from collections import Counter
 
 
 class LotoNumbers:
@@ -17,33 +18,15 @@ class LotoNumbers:
 
 class LotoValues:
     def __init__(self, listofnumbers):
-        self.dict_of_numbers = listofnumbers
-    dict_of_doubles = {}
+        self.numbers_counter = Counter()
+    doubles_counter = {}
     # Count of doubles = 990
-    for i in range(1, 45):
-        for j in range(i+1, 46):
-            dict_of_doubles[(i, j)] = 0
     dict_of_triples = {}
     # Count of triples = 14 190
-    for i in range(1, 44):
-        for j in range(i+1, 45):
-            for k in range(j+1, 46):
-                dict_of_triples[(i, j, k)] = 0
     dict_of_fours = {}
     # Count of fours =  148 995
-    for i in range(1, 43):
-        for j in range(i+1, 44):
-            for k in range(j+1, 45):
-                for i1 in range(k+1, 46):
-                    dict_of_fours[(i, j, k, i1)] = 0
     dict_of_fives = {}
     # Count of fives =  1 221 759
-    for i in range(1, 42):
-        for j in range(i+1, 43):
-            for k in range(j+1, 44):
-                for i1 in range(k+1, 45):
-                    for j1 in range(i1+1, 46):
-                        dict_of_fives[(i, j, k, i1, j1)] = 0
     dict_of_sixes = {}
     # Count of sixes =  8 145 060
     for i in range(1, 41):
@@ -52,63 +35,74 @@ class LotoValues:
                 for i1 in range(k+1, 44):
                     for j1 in range(i1+1, 45):
                         for k1 in range(j1+1, 46):
+                            doubles_counter[(j1, k1)] = 0
+                            dict_of_triples[(i1, j1, k1)] = 0
+                            dict_of_fours[(k, i1, j1, k1)] = 0
+                            dict_of_fives[(j, k, i1, j1, k1)] = 0
                             dict_of_sixes[(i, j, k, i1, j1, k1)] = 0
 
+    print(len(doubles_counter))
+    print(len(dict_of_triples))
+    print(len(dict_of_fours))
+    print(len(dict_of_fives))
+    print(len(dict_of_sixes))
+
+
     def checkdoubles(self):
-        for i in self.dict_of_numbers:
-            for j in self.dict_of_doubles:
-                if j[0] in self.dict_of_numbers[i].numbers:
-                    if j[1] in self.dict_of_numbers[i].numbers:
-                        self.dict_of_doubles[j] += 1
+        for i in self.numbers_counter:
+            for j in self.doubles_counter:
+                if j[0] in self.numbers_counter[i].numbers:
+                    if j[1] in self.numbers_counter[i].numbers:
+                        self.doubles_counter[j] += 1
 
     def checktriples(self):
-        for i in self.dict_of_numbers:
+        for i in self.numbers_counter:
             for j in self.dict_of_triples:
-                if j[0] in self.dict_of_numbers[i].numbers:
-                    if j[1] in self.dict_of_numbers[i].numbers:
-                        if j[2] in self.dict_of_numbers[i].numbers:
+                if j[0] in self.numbers_counter[i].numbers:
+                    if j[1] in self.numbers_counter[i].numbers:
+                        if j[2] in self.numbers_counter[i].numbers:
                             self.dict_of_triples[j] += 1
 
     def checkfours(self):
-        for i in self.dict_of_numbers:
+        for i in self.numbers_counter:
             for j in self.dict_of_fours:
-                if j[0] in self.dict_of_numbers[i].numbers:
-                    if j[1] in self.dict_of_numbers[i].numbers:
-                        if j[2] in self.dict_of_numbers[i].numbers:
-                            if j[3] in self.dict_of_numbers[i].numbers:
+                if j[0] in self.numbers_counter[i].numbers:
+                    if j[1] in self.numbers_counter[i].numbers:
+                        if j[2] in self.numbers_counter[i].numbers:
+                            if j[3] in self.numbers_counter[i].numbers:
                                 self.dict_of_fours[j] += 1
 
     def checkfives(self):
-        for i in self.dict_of_numbers:
+        for i in self.numbers_counter:
             for j in self.dict_of_fives:
-                if j[0] in self.dict_of_numbers[i].numbers:
-                    if j[1] in self.dict_of_numbers[i].numbers:
-                        if j[2] in self.dict_of_numbers[i].numbers:
-                            if j[3] in self.dict_of_numbers[i].numbers:
-                                if j[4] in self.dict_of_numbers[i].numbers:
+                if j[0] in self.numbers_counter[i].numbers:
+                    if j[1] in self.numbers_counter[i].numbers:
+                        if j[2] in self.numbers_counter[i].numbers:
+                            if j[3] in self.numbers_counter[i].numbers:
+                                if j[4] in self.numbers_counter[i].numbers:
                                     self.dict_of_fives[j] += 1
 
     def checksixes(self):
-        for i in self.dict_of_numbers:
+        for i in self.numbers_counter:
             for j in self.dict_of_sixes:
-                if j[0] in self.dict_of_numbers[i].numbers:
-                    if j[1] in self.dict_of_numbers[i].numbers:
-                        if j[2] in self.dict_of_numbers[i].numbers:
-                            if j[3] in self.dict_of_numbers[i].numbers:
-                                if j[4] in self.dict_of_numbers[i].numbers:
-                                    if j[5] in self.dict_of_numbers[i].numbers:
+                if j[0] in self.numbers_counter[i].numbers:
+                    if j[1] in self.numbers_counter[i].numbers:
+                        if j[2] in self.numbers_counter[i].numbers:
+                            if j[3] in self.numbers_counter[i].numbers:
+                                if j[4] in self.numbers_counter[i].numbers:
+                                    if j[5] in self.numbers_counter[i].numbers:
                                         self.dict_of_sixes[j] += 1
 
     def showdoubles(self, sort_key='unsorted'):
         if sort_key == 'sorted':
-            sorted_e = sorted(self.dict_of_doubles.items(), key=operator.itemgetter(1))
+            sorted_e = sorted(self.doubles_counter.items(), key=operator.itemgetter(1))
             for i in range(len(sorted_e)):
                 if sorted_e[i][1] != 0:
                     print("{0}   -    {1} raz".format(sorted_e[i][0], sorted_e[i][1]))
         else:
-            for i in self.dict_of_doubles:
-                if self.dict_of_doubles[i] != 0:
-                    print("{0}   -    {1} raz".format(i, self.dict_of_doubles[i]))
+            for i in self.doubles_counter:
+                if self.doubles_counter[i] != 0:
+                    print("{0}   -    {1} raz".format(i, self.doubles_counter[i]))
 
     def showtriples(self, sort_key='unsorted'):
         if sort_key == 'sorted':
@@ -154,9 +148,9 @@ class LotoValues:
                 if self.dict_of_sixes[i] != 0:
                     print("{0}   -    {1} raz".format(i, self.dict_of_sixes[i]))
 
-    def checkprevious(self):
-        for i in reversed(self.dict_of_numbers):
-            if self.dict_of_numbers[i].
+    # def checkprevious(self):
+    #     for i in reversed(self.numbers_counter):
+    #         if self.numbers_counter[i].
 
 
 dict_of_numbers = {
