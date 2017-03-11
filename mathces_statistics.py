@@ -68,7 +68,7 @@ def check_matches(result, deepness):
 # Initial parameters
 url = 'http://www.stoloto.ru/6x45/archive'
 params = {
-    'firstDraw': '1',
+    'firstDraw': '2000',
     'lastDraw': '5000',
     'mode': 'draw'
 }
@@ -76,5 +76,5 @@ print("Start Parsing")
 result = parse(url, params)
 print("Start Checking")
 # Parametes of matches deepness
-VALUE_OF_DEEP = 2
+VALUE_OF_DEEP = 1
 check_matches(result, VALUE_OF_DEEP)
